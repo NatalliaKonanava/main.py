@@ -1,9 +1,10 @@
 """
-projekt_1.py: první projekt do Engeto Online Python Akademie
+projekt_1.py: první projekt do Engeto Online Python Akademie (druhý pokus)
 
 author: Natallia Konanava
 email: nataxa_87@seznam.cz
 """
+from collections import Counter
 
 registered_users = [
     {"username": "bob", "password": "123"},
@@ -14,6 +15,7 @@ registered_users = [
 
 username = input("username: ")
 password = input("password: ")
+line = "-" * 40
 
 user_found = False
 
@@ -21,14 +23,15 @@ for user in registered_users:
     if user["username"] == username and user["password"] == password:
         user_found = True
         break
-print("-"*40)
+print(line)
 
 if user_found:
     print("Welcome to the app, ", username, "\n", "We have 3 texts to be analyzed.")
 else:
     print("unregistered user, terminating the program..")
+    exit()
 
-print("-"*40)
+print(line)
 
 TEXTS = ['''
 Situated about 10 miles west of Kemmerer,
@@ -58,161 +61,54 @@ in modern oceans. Other fish such as paddlefish,
 garpike and stingray are also present.'''
 ]
 
-text = input("Enter a number btw. 1 and 3 to select:")
 
-print("-"*40)
+def draw_bar_chart(word_lengths):
+    max_count = max(word_lengths.values(), default=0)
 
-if text == "1":
-    words = TEXTS[0].split()
-    num_words = len(words)
+    for length, count in sorted(word_lengths.items()):
+        print(f"{length:<3} | {'*' * count:<20} | {count}")
+
+
+def analyze_text(TEXTS):
+    import string
+    words = TEXTS.split()
+    cleaned_words = [word.strip(string.punctuation) for word in words]
+    num_words = len(cleaned_words)  # total_words
+    titlecase_words = [word for word in cleaned_words if word.istitle()]
+    uppercase_words = [word for word in cleaned_words if word.isupper() and word.isalpha()]
+    lowercase_words = [word for word in cleaned_words if word.islower()]
+    numbers = [int(word) for word in cleaned_words if word.isdigit()]
+    numbers_sum = sum(numbers)
+    word_lengths = Counter(len(word.strip('.,!?()[]{}"')) for word in words)
+
+
     print("There are ", num_words, "words in the selected.")
-    res = len([word for word in words if word[0].isupper()])
-    print("There are ", res, "titlecase words.")
-    big = 0
-    for word in words:
-        if word.isupper():
-            big += 1
-    print("There are ", big, "uppercase words.")
-    little = 0
-    for word in words:
-        if word.islower():
-            little += 1
-    print("There are ", little, "lowercase words.")
-    count = 0
-    for word in words:
-        if word.replace(".", "", 1).isdigit():
-            count += 1
-    print("There are ", count, "numeric strings.")
-    total = 0
-    for word in words:
-        if word.replace(".", "", 1).isdigit():
-            total += int(word)
-    print("The sum of all the numbers", total)
+    print("There are ", len(titlecase_words), "titlecase words.")
+    print("There are ", len(uppercase_words), "uppercase words.")
+    print("There are ", len(lowercase_words), "lowercase words.")
+    print("There are ", len(numbers), "numeric strings.")
+    print("The sum of all the numbers", numbers_sum)
+    print(line)
+    print(f"{'LEN':<3} | {'OCCURENCES':<20} | {'NR.'}")
+    print(line)
+    draw_bar_chart(word_lengths)
 
-    from collections import Counter
+def main():
+    choice = input("Enter a number btw. 1 and 3 to select: ".format(len(TEXTS)))
+    print(line)
 
-    text_1 = TEXTS[0]
+    if choice.isdigit():
+        index = int(choice) - 1
+        if 0 <= index < len(TEXTS):
+            analyze_text(TEXTS[index])
 
-    def draw_bar_chart(word_lengths):
-        max_count = max(word_lengths.values(), default=0)
+        else:
+            print("Invalid text number.")
+            exit()
 
-        for length, count in sorted(word_lengths.items()):
-            print(f"{length:<3} | {'*' * count:<20} | {count}")
+    else:
+        print("Please, enter a number.")
+        exit()
 
-
-    def analyze_text(text_1):
-        words = text_1.split()
-        word_lengths = Counter(len(word.strip('.,!?()[]{}"')) for word in words)
-
-        print("-" * 40)
-        print(f"{'LEN':<3} | {'OCCURENCES':<20} | {'NR.'}")
-        print("-" * 40)
-        draw_bar_chart(word_lengths)
-
-    analyze_text(text_1)
-
-elif text == "2":
-    print(TEXTS[1])
-    words = TEXTS[1].split()
-    num_words = len(words)
-    print("There are ", num_words, "words in the selected.")
-    res = len([word for word in words if word[0].isupper()])
-    print("There are ", res, "titlecase words.")
-    big = 0
-    for word in words:
-        if word.isupper():
-            big += 1
-    print("There are ", big, "uppercase words.")
-    little = 0
-    for word in words:
-        if word.islower():
-            little += 1
-    print("There are ", little, "lowercase words.")
-    count = 0
-    for word in words:
-        if word.replace(".", "", 1).isdigit():
-            count += 1
-    print("There are ", count, "numeric strings.")
-    total = 0
-    for word in words:
-        if word.replace(".", "", 1).isdigit():
-            total += int(word)
-    print("The sum of all the numbers", total)
-
-    from collections import Counter
-
-    text_2 = TEXTS[1]
-
-    def draw_bar_chart(word_lengths):
-        max_count = max(word_lengths.values(), default=0)
-
-        for length, count in sorted(word_lengths.items()):
-            print(f"{length:<3} | {'*' * count:<20} | {count}")
-
-
-    def analyze_text(text_2):
-        words = text_2.split()
-        word_lengths = Counter(len(word.strip('.,!?()[]{}"')) for word in words)
-
-        print("-"*40)
-        print(f"{'LEN':<3} | {'OCCURENCES':<20} | {'NR.'}")
-        print("-" * 40)
-        draw_bar_chart(word_lengths)
-
-    analyze_text(text_2)
-
-
-elif text == "3":
-    print(TEXTS[-1])
-    words = TEXTS[-1].split()
-    num_words = len(words)
-    print("There are ", num_words, "words in the selected.")
-    res = len([word for word in words if word[0].isupper()])
-    print("There are ", res, "titlecase words.")
-    big = 0
-    for word in words:
-        if word.isupper():
-            big += 1
-    print("There are ", big, "uppercase words.")
-    little = 0
-    for word in words:
-        if word.islower():
-            little += 1
-    print("There are ", little, "lowercase words.")
-    count = 0
-    for word in words:
-        if word.replace(".", "", 1).isdigit():
-            count += 1
-    print("There are ", count, "numeric strings.")
-    total = 0
-    for word in words:
-        if word.replace(".", "", 1).isdigit():
-            total += int(word)
-    print("The sum of all the numbers", total)
-
-    from collections import Counter
-
-    text_3 = TEXTS[-1]
-
-    def draw_bar_chart(word_lengths):
-        max_count = max(word_lengths.values(), default=0)
-
-        for length, count in sorted(word_lengths.items()):
-            print(f"{length:<3} | {'*' * count:<20} | {count}")
-
-
-    def analyze_text(text_3):
-        words = text_3.split()
-        word_lengths = Counter(len(word.strip('.,!?()[]{}"')) for word in words)
-
-        print("-"*40)
-        print(f"{'LEN':<3} | {'OCCURENCES':<20} | {'NR.'}")
-        print("-" * 40)
-        draw_bar_chart(word_lengths)
-
-    analyze_text(text_3)
-
-else:
-    print("Konec")
-
-
+if __name__ == "__main__":
+    main()
